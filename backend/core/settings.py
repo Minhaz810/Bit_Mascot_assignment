@@ -22,7 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'medicine_list',
+    'rest_framework_simplejwt',
 ]
+
+REST_FRAMEWORK = {
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -78,8 +88,6 @@ else:
             'PORT': os.getenv('DATABASE_PORT'),
         }
     }
-
-print(os.getenv('DATABASE_ENGINE'))
 
 AUTH_PASSWORD_VALIDATORS = [
     {
