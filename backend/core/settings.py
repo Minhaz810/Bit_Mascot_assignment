@@ -55,10 +55,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DB_DEBUG = False
+DB_DEBUG = False  # make this true if you want to use the sqlite databse, which is not a very reliable option
 
 if DB_DEBUG:
     DATABASES = {
