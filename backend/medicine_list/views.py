@@ -8,6 +8,7 @@ from rest_framework import status
 from medicine_list.models import MedicineList, Manufacturer
 from medicine_list.serializers import MedicineListSerializer
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 
 class MedicineListPublicApiView(APIView):
@@ -31,9 +32,10 @@ class MedicineListPublicApiView(APIView):
 
         return paginator.get_paginated_response(data)
     
-    
+
 class MedicineListAdminApiView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self,request):
         query = request.query_params.get('query',None)
         medicine_list = MedicineList.objects.all()
@@ -53,3 +55,25 @@ class MedicineListAdminApiView(APIView):
         data        = serializer.data
 
         return paginator.get_paginated_response(data)
+    
+    def post(self, request):
+        data = request.data
+        serializer = MedicineListSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        medicine_list_id = request.data.get("id")
+        if not medicine_list_id:
+            return Response({"error": "ID is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        medicine_list_item = get_object_or_404(MedicineList, id=medicine_list_id)
+        serializer = MedicineListSerializer(medicine_list_item, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
