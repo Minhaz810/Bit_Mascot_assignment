@@ -10,18 +10,34 @@ from medicine_list.serializers import MedicineListSerializer
 from django.db.models import Q
 
 
-class MedicineListAdminApiView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self,request):
-        return Response({
-            "message":"This is a test response"
-        },status= status.HTTP_200_OK)
-    
 class MedicineListPublicApiView(APIView):
     def get(self,request):
         query = request.query_params.get('query',None)
         medicine_list = MedicineList.objects.all()
+
+        if query:
+            medicine_list = medicine_list.filter(
+                    Q(name__icontains=query) | 
+                    Q(batch_number__icontains=query) |
+                    Q(generic_name__icontains=query)
+                )
+        
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        paginated_queryset = paginator.paginate_queryset(medicine_list, request)
+
+        serializer  = MedicineListSerializer(paginated_queryset,many=True)
+        data        = serializer.data
+
+        return paginator.get_paginated_response(data)
     
+    
+class MedicineListAdminApiView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        query = request.query_params.get('query',None)
+        medicine_list = MedicineList.objects.all()
+
         if query:
             medicine_list = medicine_list.filter(
                     Q(name__icontains=query) | 
