@@ -67,13 +67,33 @@ class MedicineListAdminApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request):
-        medicine_list_id = request.data.get("id")
-        if not medicine_list_id:
-            return Response({"error": "ID is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+        medicine_id = request.data.get("id")
+        if not medicine_id:
+            return Response({"error": "ID required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        medicine_list_item = get_object_or_404(MedicineList, id=medicine_list_id)
+        medicine_list_item = get_object_or_404(MedicineList, id=medicine_id)
         serializer = MedicineListSerializer(medicine_list_item, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                    {
+                        "message":f"successfully updated medicine with id-{medicine_id}"
+                    }, 
+                    status=status.HTTP_200_OK
+                )
+    
+    def delete(self, request):
+        medicine_id = request.data.get("id")
+        
+        if not medicine_id:
+            return Response({"error": "ID required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        medicine_list_item = get_object_or_404(MedicineList, id=medicine_id)
+        medicine_list_item.delete()
+        return Response(
+                    {
+                        "message":f"successfully deleted medicine with id-{medicine_id}"
+                    }, 
+                    status=status.HTTP_200_OK
+                )
