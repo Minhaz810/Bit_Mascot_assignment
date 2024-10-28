@@ -7,6 +7,7 @@ from rest_framework import status
 
 from medicine_list.models import MedicineList, Manufacturer
 from medicine_list.serializers import MedicineListSerializer
+from django.db.models import Q
 
 
 class MedicineListAdminApiView(APIView):
@@ -18,9 +19,18 @@ class MedicineListAdminApiView(APIView):
     
 class MedicineListPublicApiView(APIView):
     def get(self,request):
+        query = request.query_params.get('query',None)
+        medicine_list = MedicineList.objects.all()
+    
+        if query:
+            medicine_list = medicine_list.filter(
+                    Q(name__icontains=query) | 
+                    Q(batch_number__icontains=query) |
+                    Q(generic_name__icontains=query)
+                )
+        
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        medicine_list = MedicineList.objects.all()
         paginated_queryset = paginator.paginate_queryset(medicine_list, request)
 
         serializer  = MedicineListSerializer(paginated_queryset,many=True)
