@@ -24,7 +24,7 @@ class MedicineListPublicApiView(APIView):
                 )
         
         paginator = PageNumberPagination()
-        paginator.page_size = 10
+        paginator.page_size = 3
         paginated_queryset = paginator.paginate_queryset(medicine_list, request)
 
         serializer  = MedicineListSerializer(paginated_queryset,many=True)
