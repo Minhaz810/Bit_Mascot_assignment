@@ -14,14 +14,14 @@ from django.shortcuts import get_object_or_404
 class MedicineListPublicApiView(APIView):
     def get(self,request):
         query = request.query_params.get('query',None)
-        medicine_list = MedicineList.objects.all()
+        medicine_list = MedicineList.objects.all().order_by('-updated_at')
 
         if query:
             medicine_list = medicine_list.filter(
                     Q(name__icontains=query) | 
                     Q(batch_number__icontains=query) |
                     Q(generic_name__icontains=query)
-                )
+                ).order_by('-updated_at')
         
         paginator = PageNumberPagination()
         paginator.page_size = 3
@@ -38,14 +38,14 @@ class MedicineListAdminApiView(APIView):
 
     def get(self,request):
         query = request.query_params.get('query',None)
-        medicine_list = MedicineList.objects.all()
+        medicine_list = MedicineList.objects.all().order_by('-updated_at')
 
         if query:
             medicine_list = medicine_list.filter(
                     Q(name__icontains=query) | 
                     Q(batch_number__icontains=query) |
                     Q(generic_name__icontains=query)
-                )
+                ).order_by('-updated_at')
         
         paginator = PageNumberPagination()
         paginator.page_size = 10
@@ -106,7 +106,7 @@ class ManufacturerListAPIView(APIView):
         data        = serializer.data
 
         return Response({
-            "data":data
+            "results":data
         },status=status.HTTP_200_OK)
 
 
