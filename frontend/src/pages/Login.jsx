@@ -10,7 +10,7 @@ function LoginPage() {
   const handleLogin = async () => {
     const result = await SignIn(username,password)
     if (result["status"] === "success"){
-        localStorage.setItem("userToken",result.data)
+        localStorage.setItem("userToken",JSON.stringify(result.data))
         navigate("/admin")
     }
   };

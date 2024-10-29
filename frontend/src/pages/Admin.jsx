@@ -1,10 +1,14 @@
 import { useState,useEffect } from "react";
 import { getMedicineList } from "../api/getMedicineList";
+import { getManufacturerList } from "../api/getManufacturerList";
 import { extractPageNumber } from "../api/utils";
 import { useNavigate } from "react-router-dom";
+import { updateMedicine } from "../api/updateMedicine";
+import { deleteMedicine } from "../api/deleteMedicine";
 
 const AdminPage = () => {
     const [medicineList,setMedicineList] = useState([])
+    const [manufacturerList,setManufacturerList] = useState([])
     const [loading,setLoading] = useState(false)
     const [next,setNext] = useState(null)
     const [prev,setPrev] = useState(null)
@@ -12,6 +16,13 @@ const AdminPage = () => {
     const [deleteModalOpen,setDeleteModalOpen] = useState(false)
     const [editModelOpen,setEditModalOpen] = useState(false)
     const [editableData,setEditableData] = useState({})
+    const [medicineName, setMedicineName] = useState(editableData?.name || "");
+    const [medicinePrice, setMedicinePrice] = useState(editableData?.price || "");
+    const [manufacturer, setManufacturer] = useState(editableData?.manufacturer || {});
+    const [genericName, setGenericName] = useState(editableData?.generic_name || "");
+    const [description, setDescription] = useState(editableData?.description || "");
+    const [batchNumber, setBatchNumber] = useState(editableData?.batch_number || "");
+    const [otherDetails, setOtherDetails] = useState(editableData?.other_related_details || "");
     const [selectedID,setSelectedID] = useState(null)
 
     const navigate = useNavigate()
@@ -23,6 +34,15 @@ const AdminPage = () => {
             setNext(extractPageNumber(data["result"]["next"]))
             setPrev(extractPageNumber(data["result"]["previous"]))
             setMedicineList(data["result"]["results"])
+        }
+        setLoading(false)
+    }
+
+    const fetchManufacturerList = async () =>{
+        setLoading(true)
+        let data = await getManufacturerList()
+        if(data["status"] == "success"){
+            setManufacturerList(data["result"]["results"])
         }
         setLoading(false)
     }
@@ -54,19 +74,51 @@ const AdminPage = () => {
         setEditModalOpen(true)
     }
 
-    const handleDelete = () =>{
-        //will add the api call later
-        setDeleteModalOpen(false)
+    const handleDelete = async () =>{
+        const result = await deleteMedicine(selectedID)
+        if (result["status"]==="success"){
+            setDeleteModalOpen(false)
+            fetchMedicineList()
+        }
     }
     
-    const handleUpdate = () =>{
-        console.log(editableData)
+    const handleUpdate = async () =>{
+        const payLoad = {
+            "id":editableData.id,
+            "name": medicineName,
+            "price": medicinePrice,
+            "manufacturer": manufacturer,
+            "generic_name": genericName,
+            "description": description,
+            "batch_number": batchNumber,
+            "other_related_detailes": otherDetails
+          };
+        
+        const result = await updateMedicine(payLoad)
+        if (result["status"]==="success"){
+            setEditModalOpen(false)
+            fetchMedicineList()
+        }
     }
 
     useEffect(()=>{
         fetchMedicineList()
+        fetchManufacturerList()
     },[])
 
+    useEffect(() => {
+        if (editableData) {
+          setMedicineName(editableData.name || "");
+          setMedicinePrice(editableData.price || "");
+          setManufacturer(editableData.manufacturer || "");
+          setGenericName(editableData.generic_name || "");
+          setDescription(editableData.description || "");
+          setBatchNumber(editableData.batch_number || "");
+          setOtherDetails(editableData.other_related_detailes || "");
+        }
+      }, [editableData]);
+    
+    
     return (
         <>
             <div className="w-full shadow">
@@ -199,76 +251,82 @@ const AdminPage = () => {
             {editModelOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="w-full max-w-sm rounded-xl bg-white px-8 py-12 shadow-lg">
-                  <div className="mb-6 text-center font-semibold text-lg">
+                    <div className="mb-6 text-center font-semibold text-lg">
                     Edit Medicine Details
-                  </div>
-                  <div className="space-y-4">
+                    </div>
+                    <div className="space-y-4">
                     <input
-                      type="text"
-                      placeholder="Name"
-                      name="name"
-                      value={editableData.name}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="Name"
+                        value={medicineName}
+                        onChange={(e) => setMedicineName(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
-                      type="number"
-                      placeholder="Price"
-                      name="price"
-                      value={editableData.price}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="number"
+                        placeholder="Price"
+                        value={medicinePrice}
+                        onChange={(e) => setMedicinePrice(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <select
-                      placeholder="Manufacturer"
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value=""
+                            onChange={(e) => {
+                            const selectedManufacturer = manufacturerList.find(item => item.id === parseInt(e.target.value));
+                            setManufacturer(selectedManufacturer);
+                        }}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value={editableData?.manufacturer?.id}>{editableData.manufacturer.name}</option>
-                      <option value="manufacturer1">Manufacturer 1</option>
-                      <option value="manufacturer2">Manufacturer 2</option>
-                      <option value="manufacturer3">Manufacturer 3</option>
+                        <option value="" disabled>{manufacturer?.name}</option>
+                        {manufacturerList.map((item) => (
+                        <option key={item.id} value={item.id}>
+                            {item.name}
+                        </option>
+                        ))}
                     </select>
                     <input
-                      type="text"
-                      placeholder="Generic Name"
-                      name="generic_name"
-                      value={editableData.generic_name}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="Generic Name"
+                        value={genericName}
+                        onChange={(e) => setGenericName(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
-                      type="text"
-                      placeholder="Description"
-                      name="description"
-                      value={editableData.description}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
-                      type="text"
-                      placeholder="Batch Number"
-                      name="batch_number"
-                      value={editableData.batch_number}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="Batch Number"
+                        value={batchNumber}
+                        onChange={(e) => setBatchNumber(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
-                      type="text"
-                      placeholder="Other Details"
-                      name="other_related_details"
-                      value={editableData.other_related_detailes}
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="Other Details"
+                        value={otherDetails}
+                        onChange={(e) => setOtherDetails(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
-                  <div className="flex justify-center space-x-4 mt-6">
+                    </div>
+                    <div className="flex justify-center space-x-4 mt-6">
                     <button
-                      className="rounded-full bg-[rgba(0,200,0,0.8)] px-10 py-2 font-semibold text-white transition-transform duration-300 hover:scale-105"
-                      onClick={() => handleUpdate()}
+                        className="rounded-full bg-[rgba(0,200,0,0.8)] px-10 py-2 font-semibold text-white transition-transform duration-300 hover:scale-105"
+                        onClick={() => handleUpdate()}
                     >
-                      Save
+                        Save
                     </button>
                     <button
-                      className="rounded-full bg-[rgba(255,0,0,0.8)] px-10 py-2 font-semibold text-white transition-transform duration-300 hover:scale-105"
-                      onClick={() => setEditModalOpen(false)}
+                        className="rounded-full bg-[rgba(255,0,0,0.8)] px-10 py-2 font-semibold text-white transition-transform duration-300 hover:scale-105"
+                        onClick={() => setEditModalOpen(false)}
                     >
-                      Cancel
+                        Cancel
                     </button>
-                  </div>
+                    </div>
                 </div>
               </div>
             )}
