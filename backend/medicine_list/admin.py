@@ -6,7 +6,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 class MedicineListAdmin(admin.ModelAdmin):
-    list_display = ('name', 'generic_name', 'manufacturer', 'price')
+    list_display = ('name', 'generic_name', 'manufacturer', 'price','created_at', 'updated_at')
     list_filter = ('manufacturer',)
     search_fields = ('name', 'generic_name')
 
