@@ -6,7 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
 from medicine_list.models import MedicineList, Manufacturer
-from medicine_list.serializers import MedicineListSerializer
+from medicine_list.serializers import MedicineListSerializer,ManufacturerSerializer
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
@@ -97,3 +97,16 @@ class MedicineListAdminApiView(APIView):
                     }, 
                     status=status.HTTP_200_OK
                 )
+
+
+class ManufacturerListAPIView(APIView):
+    def get(self,request):
+        manufacturer_list = Manufacturer.objects.all()
+        serializer  = ManufacturerSerializer(manufacturer_list,many=True)
+        data        = serializer.data
+
+        return Response({
+            "data":data
+        },status=status.HTTP_200_OK)
+
+
