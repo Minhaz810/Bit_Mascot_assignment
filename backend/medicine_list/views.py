@@ -68,23 +68,41 @@ class MedicineListAdminApiView(APIView):
     
     def put(self, request):
         medicine_id = request.data.get("id")
+        manufacturer_id = request.data.get("manufacturer").get("id")
+        name = request.data.get("name")
+        generic_name = request.data.get("generic_name")
+        description = request.data.get("description")
+        price = request.data.get("price")
+        batch_number = request.data.get("batch_number")
+        other_related_details = request.data.get("other_related_detailes")
+
         if not medicine_id:
-            return Response({"error": "ID required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Medicine ID required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not manufacturer_id:
+            return Response({"error": "Manufacturer ID required"}, status=status.HTTP_400_BAD_REQUEST)
 
         medicine_list_item = get_object_or_404(MedicineList, id=medicine_id)
-        serializer = MedicineListSerializer(medicine_list_item, data=request.data, partial=True)
+        manufacturer = get_object_or_404(Manufacturer,id=manufacturer_id)
+        
+        
+        medicine_list_item.name = name
+        medicine_list_item.generic_name = generic_name
+        medicine_list_item.description = description
+        medicine_list_item.price = price
+        medicine_list_item.batch_number = batch_number
+        medicine_list_item.other_related_details = other_related_details
+        medicine_list_item.manufacturer = manufacturer
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                    {
-                        "message":f"successfully updated medicine with id-{medicine_id}"
-                    }, 
-                    status=status.HTTP_200_OK
-                )
+        medicine_list_item.save()
+        return Response(
+            {
+                "message": f"Successfully updated medicine with id-{medicine_id}"
+            }, 
+            status=status.HTTP_200_OK
+        )
     
     def delete(self, request):
-        medicine_id = request.data.get("id")
+        medicine_id = request.query_params.get("id")
         
         if not medicine_id:
             return Response({"error": "ID required"}, status=status.HTTP_400_BAD_REQUEST)
