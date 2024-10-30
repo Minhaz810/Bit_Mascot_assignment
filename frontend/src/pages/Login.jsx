@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import SignIn from '../api/auth';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async () => {
+    setLoading(true)
     const result = await SignIn(username,password)
     if (result["status"] === "success"){
         localStorage.setItem("userToken",JSON.stringify(result.data))
         navigate("/admin")
+        setLoading(false)
     }
   };
 
@@ -41,9 +45,12 @@ function LoginPage() {
         </div>
         <button
           onClick={handleLogin}
-          className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full py-2 px-4 bg-blue-950 hover:bg-blue-800 text-white font-semibold rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          Login
+          {loading?(<div className="flex justify-center">
+            <Loader/>
+          </div>):
+          (<span>Login</span>)}
         </button>
       </div>
     </div>

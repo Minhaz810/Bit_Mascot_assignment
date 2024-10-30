@@ -3,7 +3,7 @@ import BASE_URL from "./init";
 export const addMedicine = async (payLoad) => {
     const url = `${BASE_URL}/api/v1/admin/medicine_list`;
     const token = JSON.parse(localStorage.getItem('userToken')).access;
-
+    try{
     const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -27,4 +27,11 @@ export const addMedicine = async (payLoad) => {
         };
     }
     return result;
+    }catch{
+        result = {
+            "status": "bad request",
+        };
+        return result
+    }
+
 };
