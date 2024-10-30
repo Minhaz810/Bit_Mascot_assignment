@@ -39,16 +39,10 @@ Follow these steps to set up and run the project locally.
      ```bash
      python manage.py shell
      ```
-   - import utility function
+   - import utility function and generate data
       ```bash
      >> from medicine_list.utils import generate_data
-     ```
-   - call the function
-      ```bash
      >> generate_data()
-     ```
-   - exit the shell
-      ```bash
      >> exit()
      ```
 
