@@ -33,20 +33,39 @@ Follow these steps to set up and run the project locally.
      ```
    - Open the `.env` file and update the values as needed.
 
-6. **Start the Django Server**
+6. **Create Dummy Data**
+   - Go to python shell:
+     
+     ```bash
+     python manage.py shell
+     ```
+   - import utility function
+      ```bash
+     from medicine_list.utils import generate_data
+     ```
+   - call the function
+      ```bash
+     generate_data()
+     ```
+   - exit the shell
+      ```bash
+     exit()
+     ```
+
+7. **Start the Django Server**
    ```bash
    python manage.py runserver
 
 ### Frontend Setup
 
-7. **Navigate to the Frontend Directory**
+8. **Navigate to the Frontend Directory**
    ```bash
    cd ../frontend
    
-8. **Install Node.js Dependencies**
+9. **Install Node.js Dependencies**
    ```bash
    npm install
 
-9. **Run the Development Server**
+10. **Run the Development Server**
    ```bash
    npm run dev
