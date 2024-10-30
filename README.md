@@ -12,4 +12,8 @@ Follow these steps to set up and run the project locally.
    cd project-name
    python3 -m venv venv
    source venv/bin/activate  # For Windows: venv\Scripts\activate
-# Bit_Mascot_Assignment
+
+2. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Minhaz810/Bit_Mascot_Assignment.git
+
