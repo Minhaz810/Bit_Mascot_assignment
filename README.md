@@ -41,15 +41,15 @@ Follow these steps to set up and run the project locally.
      ```
    - import utility function
       ```bash
-     >>from medicine_list.utils import generate_data
+     >> from medicine_list.utils import generate_data
      ```
    - call the function
       ```bash
-     >>generate_data()
+     >> generate_data()
      ```
    - exit the shell
       ```bash
-     >>exit()
+     >> exit()
      ```
 
 7. **Start the Django Server**
