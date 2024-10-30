@@ -27,6 +27,7 @@ Follow these steps to set up and run the project locally.
 
 5. **Configure Environment Variables**
    - Create a `.env` file in the backend directory by copying `.env.example`:
+     
      ```bash
      cp .env.example .env
      ```
@@ -49,8 +50,3 @@ Follow these steps to set up and run the project locally.
 9. **Run the Development Server**
    ```bash
    npm run dev
-
-
-
-
-
