@@ -26,6 +26,7 @@ const AdminPage = () => {
     const [batchNumber, setBatchNumber] = useState(editableData?.batch_number || "");
     const [otherDetails, setOtherDetails] = useState(editableData?.other_related_details || "");
     const [selectedID,setSelectedID] = useState(null)
+    const [error,setError] = useState(null)
 
     const navigate = useNavigate()
 
@@ -117,11 +118,17 @@ const AdminPage = () => {
             "batch_number": batchNumber,
             "other_related_detailes": otherDetails
           };
+        
         const result = await addMedicine(payLoad)
         if (result["status"]==="success"){
             setAddModalOpen(false)
             fetchMedicineList()
+        
+        }else{
+            setError("Please Add All The Required Field!")
         }
+            
+        
     }
 
     useEffect(()=>{
@@ -438,6 +445,9 @@ const AdminPage = () => {
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     </div>
+                    {error && <div className="text-red-500 mt-2 text-center">
+                        {error}
+                    </div>}
                     <div className="flex justify-center space-x-4 mt-6">
                     <button
                         className="rounded-full bg-[rgba(0,200,0,0.8)] px-10 py-2 font-semibold text-white transition-transform duration-300 hover:scale-105"
