@@ -33,7 +33,13 @@ Follow these steps to set up and run the project locally.
      ```
    - Open the `.env` file and update the values as needed.
 
-6. **Create Dummy Data**
+7. **Migrate the tables into databse**
+     ```bash
+     python manage.py makemigrations
+     python manage.py migrate
+     ```
+
+8. **Create Dummy Data**
    - Go to python shell:
      
      ```bash
@@ -46,20 +52,20 @@ Follow these steps to set up and run the project locally.
      >> exit()
      ```
 
-7. **Start the Django Server**
+9. **Start the Django Server**
    ```bash
    python manage.py runserver
 
 ### Frontend Setup
 
-8. **Navigate to the Frontend Directory**
+10. **Navigate to the Frontend Directory**
    ```bash
    cd ../frontend
    
-9. **Install Node.js Dependencies**
+11. **Install Node.js Dependencies**
    ```bash
    npm install
 
-10. **Run the Development Server**
+12. **Run the Development Server**
    ```bash
    npm run dev
