@@ -61,11 +61,14 @@ Follow these steps to set up and run the project locally.
 10. **Navigate to the Frontend Directory**
    ```bash
    cd ../frontend
+   ```
    
 11. **Install Node.js Dependencies**
    ```bash
    npm install
+   ```
 
 12. **Run the Development Server**
    ```bash
    npm run dev
+   ```
