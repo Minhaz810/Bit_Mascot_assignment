@@ -15,11 +15,11 @@ Follow these steps to set up and run the project locally.
 
 2. **Clone the Repository**
    ```bash
-   git clone https://github.com/Minhaz810/Bit_Mascot_Assignment.git
+   git clone https://github.com/Minhaz810/Medicine-Index.git
 
 3. **Navigate to the Backend Directory**
    ```bash
-   cd Bit_Mascot_Assignment/backend
+   cd Medicine-Index/backend
 
 4. **Install Python Dependencies**
    ```bash
