@@ -1,4 +1,4 @@
-# Bit Mascot Assignment
+# Medicine Index
 
 ## Setup Instructions
 
